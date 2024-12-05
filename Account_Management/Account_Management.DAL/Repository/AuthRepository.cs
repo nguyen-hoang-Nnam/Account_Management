@@ -28,5 +28,10 @@ namespace Account_Management.DAL.Repository
                 .Include(a => a.User)
                 .SingleOrDefaultAsync(u => u.Username == Username);
         }
+
+        public async Task<Account> GetByEmail(string email)
+        {
+            return await _appDbContext.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+        }
     }
 }

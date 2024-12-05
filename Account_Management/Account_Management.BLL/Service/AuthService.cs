@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Account_Management.Models.Models.DTO.Auth;
 using Account_Management.Models.Enum;
 using BCrypt.Net;
+using Google.Apis.Auth;
 
 namespace Account_Management.BLL.Service
 {
@@ -105,6 +106,69 @@ namespace Account_Management.BLL.Service
             response.IsSucceed = true;
             response.Message = "Registration successful!";
             response.Data = true;
+            return response;
+        }
+        public async Task<ResponseDTO> LoginWithGoogleAsync(string googleToken)
+        {
+            var response = new ResponseDTO();
+
+            var googleAuthHelper = new GoogleAuthHelper();
+            var payload = await googleAuthHelper.ValidateGoogleTokenAsync(googleToken);
+
+            if (payload == null)
+            {
+                response.IsSucceed = false;
+                response.Message = "Invalid Google token.";
+                return response;
+            }
+
+            var account = await _authRepository.GetByEmail(payload.Email);
+
+            if (account == null)
+            {
+                // Register a new account if it doesn't exist
+                var newAccount = new Account
+                {
+                    AccountId = GenerateUniqueId(),
+                    Email = payload.Email,
+                    Username = payload.Email, // Use email as the username
+                    IsActive = AccountStatus.Active,
+                    Role = AccountRole.Customer,
+                    Token = string.Empty,
+                    RefreshToken = string.Empty,
+                    CreatedAt = DateTime.UtcNow,
+                };
+
+                await _authRepository.AddAsync(newAccount);
+
+                // Add a corresponding User entry
+                var user = new User
+                {
+                    AccountId = newAccount.AccountId,
+                    FullName = payload.Name,
+                    PhoneNumber = null // Optional: populate later
+                };
+
+                await _userRepository.AddAsync(user);
+
+                account = newAccount;
+            }
+
+            // Generate JWT and refresh tokens
+            var token = _jwtHelper.GenerateJwtToken(account);
+            var refreshToken = _jwtHelper.GenerateRefreshToken();
+
+            account.Token = token;
+            account.TokenExpires = DateTime.UtcNow.AddHours(1);
+            account.RefreshToken = refreshToken;
+            account.RefreshTokenExpires = DateTime.UtcNow.AddDays(7);
+
+            await _authRepository.UpdateAsync(account);
+
+            response.IsSucceed = true;
+            response.Message = "Google login successful!";
+            response.Data = new { Token = token, RefreshToken = refreshToken };
+
             return response;
         }
 
