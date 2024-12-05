@@ -35,5 +35,17 @@ namespace Account_Management.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginDTO googleLoginDTO)
+        {
+            var response = await _authService.LoginWithGoogleAsync(googleLoginDTO.Token);
+            if (!response.IsSucceed)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

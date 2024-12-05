@@ -10,5 +10,6 @@ namespace Account_Management.DAL.Repository.IRepository
     public interface IAuthRepository : IGenericRepository<Account>
     {
         Task<Account?> GetByUserName(string Username);
+        Task<Account> GetByEmail(string email);
     }
 }
