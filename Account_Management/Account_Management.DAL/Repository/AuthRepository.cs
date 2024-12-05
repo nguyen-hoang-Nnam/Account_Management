@@ -24,8 +24,9 @@ namespace Account_Management.DAL.Repository
 
         public async Task<Account?> GetByUserName(string Username)
         {
-            return await _appDbContext.Accounts.SingleOrDefaultAsync(u => u.Username == Username);
+            return await _appDbContext.Accounts
+                .Include(a => a.User)
+                .SingleOrDefaultAsync(u => u.Username == Username);
         }
-
     }
 }

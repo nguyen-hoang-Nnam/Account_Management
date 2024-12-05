@@ -51,7 +51,13 @@ namespace Account_Management.BLL.Service
             var token = _jwtHelper.GenerateJwtToken(user);
             var refreshToken = _jwtHelper.GenerateRefreshToken();
 
+            var tokenExpiration = DateTime.Now.AddHours(1);
+            var refreshTokenExpiration = DateTime.Now.AddDays(7);
+
+            user.Token = token;
+            user.TokenExpires = tokenExpiration;
             user.RefreshToken = refreshToken;
+            user.RefreshTokenExpires = refreshTokenExpiration;
             await _authRepository.UpdateAsync(user);
 
             response.IsSucceed = true;
@@ -82,7 +88,7 @@ namespace Account_Management.BLL.Service
             account.Role = AccountRole.Customer;
             account.Token = string.Empty;
             account.RefreshToken = string.Empty;
-            account.CreatedAt = DateTime.UtcNow;
+            account.CreatedAt = DateTime.Now;
 
             await _authRepository.AddAsync(account);
 
