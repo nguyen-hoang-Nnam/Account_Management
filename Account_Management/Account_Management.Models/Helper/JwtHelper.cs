@@ -32,7 +32,8 @@ namespace Account_Management.Models.Helper
             {
                 new Claim(JwtRegisteredClaimNames.NameId, account.AccountId),
                 new Claim(JwtRegisteredClaimNames.Email, account.Email),
-                new Claim(ClaimTypes.Name, account.Username),
+                new Claim(ClaimTypes.Name, account.User.FullName),
+                new Claim(ClaimTypes.MobilePhone, account.User.PhoneNumber),
                 new Claim(ClaimTypes.Role, account.Role.ToString()),
                 // Add more claims as needed
             }),
