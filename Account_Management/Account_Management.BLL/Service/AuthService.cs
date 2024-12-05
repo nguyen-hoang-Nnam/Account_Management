@@ -70,7 +70,7 @@ namespace Account_Management.BLL.Service
             var existingUser = await _authRepository.GetByUserName(registerDTO.Username);
             if (existingUser != null)
             {
-                response.Message = "User already exists";
+                response.Message = "User already exists!";
                 return response;
             }
 
