@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Account_Management.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace Account_Management.Models.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
-        public string Role { get; set; }
+        public AccountRole Role { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsActive { get; set; } = true;
+        public AccountStatus IsActive { get; set; }
         public string Token { get; set; }
         public DateTime TokenExpires { get; set; }
         public string RefreshToken { get; set; }

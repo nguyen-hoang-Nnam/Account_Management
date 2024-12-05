@@ -22,6 +22,16 @@ namespace Account_Management.Models.Mapper
             CreateMap<Staff, StaffDTO>().ReverseMap();
             CreateMap<Admin, AdminDTO>().ReverseMap();
             CreateMap<RegisterDTO, Account>();
+
+            CreateMap<Account, RegisterDTO>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+
+            CreateMap<User, RegisterDTO>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Account.Username))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Account.Email))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
         }
     }
 }
